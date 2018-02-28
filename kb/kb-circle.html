@@ -39,6 +39,14 @@
       }
       static get properties() {
         return {
+          x: {
+            type: Number,
+            value: 0
+          },
+          y: {
+            type: Number,
+            value: 0
+          },
           lock: {
             type: Boolean,
             value: false
@@ -63,13 +71,16 @@
       }
       _spin(e) {
         if(!this.lock) {
-          this.lock = true;
+          console.log(this.x, this.y);
           console.log(this.currentColor, this.currentPosition);
+
+          this.lock = true;
           TweenLite.to(this.$.container, 0.2, {
             rotation: "+=90",
             ease: Linear.easeNone,
             onComplete: () => {
               this.currentPosition == 3 ? this.currentPosition = 0 : this.currentPosition++;
+              this.sendSpinvalues();
               this.lock = false;
             }
           });
@@ -95,9 +106,32 @@
         this.changeColorRandom();
         this.changeSpinRandom();
       }
+      sendSpinvalues() { //TODO: Validar los limites
+        const topAddress = `circle-${this.x}-${this.y-1}-listener`;
+        const leftAddress = `circle-${this.x-1}-${this.y}-listener`;
+        const bottomAddress = `circle-${this.x}-${this.y+1}-listener`;
+        const rightAddress = `circle-${this.x+1}-${this.y}-listener`;
+        const detail = {detail: {
+          color: this.currentColor,
+          position: this.currentPosition
+        }};
+        document.dispatchEvent(new CustomEvent(topAddress, detail));
+        document.dispatchEvent(new CustomEvent(leftAddress, detail));
+        document.dispatchEvent(new CustomEvent(bottomAddress, detail));
+        document.dispatchEvent(new CustomEvent(rightAddress, detail));
+      }
+      setListener() {
+        const address = `circle-${this.x}-${this.y}-listener`;
+        document.addEventListener(address, (e) => {
+          console.log(address, e.detail);
+          const data = e.detail;
+          this.changeColor(data.color);
+        });
+      }
       ready() {
         super.ready();
         this.starAsRandom();
+        this.setListener();
       }
     }
     customElements.define(KbCircle.is, KbCircle);
