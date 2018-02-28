@@ -122,10 +122,11 @@
               position: position
           }}));
         }
-        dispatchEventFunc(this.x, this.y-1, 'top');
-        dispatchEventFunc(this.x+1, this.y, 'right');
-        dispatchEventFunc(this.x, this.y+1, 'bottom');
-        dispatchEventFunc(this.x-1, this.y, 'left');
+        [ [this.x, this.y-1, 'top'],
+          [this.x+1, this.y, 'right'],
+          [this.x, this.y+1, 'bottom'],
+          [this.x-1, this.y, 'left']
+        ].forEach(i => dispatchEventFunc(...i));
       }
       setListener() {
         const applyValidations = (data, position, p1, p2, q1, q2) => {
@@ -137,10 +138,11 @@
           }
         }
         document.addEventListener(`circle-${this.x}-${this.y}-listener`, (e) => {
-          applyValidations(e.detail, 'top', 0, 3, 1, 2);
-          applyValidations(e.detail, 'right', 0, 1, 2, 3);
-          applyValidations(e.detail, 'bottom', 1, 2, 3, 0);
-          applyValidations(e.detail, 'left', 2, 3, 0, 1);
+          [ [e.detail, 'top', 0, 3, 1, 2],
+            [e.detail, 'right', 0, 1, 2, 3],
+            [e.detail, 'bottom', 1, 2, 3, 0],
+            [e.detail, 'left', 2, 3, 0, 1]
+          ].forEach(i => applyValidations(...i));
         });
       }
       ready() {
