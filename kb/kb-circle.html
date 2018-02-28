@@ -6,6 +6,7 @@
       width: 50px;
       height: 50px;
       overflow: hidden;
+      margin: -2px;
     }
     #container {
       display: block;
@@ -38,6 +39,10 @@
       }
       static get properties() {
         return {
+          lock: {
+            type: Boolean,
+            value: false
+          },
           currentPosition: Number,
           positions: {
             type: Array,
@@ -57,10 +62,18 @@
         }
       }
       _spin(e) {
-        TweenLite.to(this.$.container, 0.2, {
-          rotation: "+=90",
-          ease: Linear.easeNone
-        });
+        if(!this.lock) {
+          this.lock = true;
+          console.log(this.currentColor, this.currentPosition);
+          TweenLite.to(this.$.container, 0.2, {
+            rotation: "+=90",
+            ease: Linear.easeNone,
+            onComplete: () => {
+              this.currentPosition == 3 ? this.currentPosition = 0 : this.currentPosition++;
+              this.lock = false;
+            }
+          });
+        }
       }
       changeSpinRandom() {
         const randomIndex = Math.floor((Math.random() * 4) + 0);
@@ -68,6 +81,7 @@
           rotation: `+=${this.positions[randomIndex]}`,
           ease: Linear.easeNone
         });
+        this.currentPosition = randomIndex;
       }
       changeColorRandom() {
         const randomIndex = Math.floor((Math.random() * 5) + 0);
