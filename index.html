@@ -52,7 +52,9 @@
     <script>
     HTMLImports.whenReady(function() {
       class MainDocumentElement extends Polymer.Element {
-        static get is() { return 'main-document-element'; }
+        static get is() {
+          return "main-document-element";
+        }
         static get properties() {
           return {
             matrixSize: {
@@ -63,10 +65,10 @@
         }
         monitorListener() {
           document.addEventListener("monitor-listener", ml => {
-            const nodeCircles = this.shadowRoot.querySelectorAll("kb-circle");
-            const circleList = Array.prototype.slice.call(nodeCircles);
-            const statusList = circleList.map(c => c.lock);
-            circleList.forEach(el => {
+            const circlesAsNode = this.shadowRoot.querySelectorAll("kb-circle");
+            const circleAsList = Array.prototype.slice.call(circlesAsNode);
+            const statusList = circleAsList.map(c => c.lock);
+            circleAsList.forEach(el => {
               el.style.pointerEvents = statusList.some(s => s) ? "none" : "auto";
             });
           });
