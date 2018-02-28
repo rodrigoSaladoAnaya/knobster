@@ -70,6 +70,9 @@
           }
         }
       }
+      getLockStatus() {
+        return this.lock;
+      }
       _spin(e) {
         if(!this.lock) {
           this.lock = true;
@@ -80,6 +83,9 @@
               this.rotation == 3 ? this.rotation = 0 : this.rotation++;
               this.sendSpinValues();
               this.lock = false;
+              document.dispatchEvent(new CustomEvent("monitor-listener", {
+                detail: { color: this.color }
+              }));
             }
           });
         }
