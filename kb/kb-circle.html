@@ -3,27 +3,30 @@
     <style>
     :host {
       display: inline-block;
+      width: 50px;
+      height: 50px;
+      overflow: hidden;
     }
     #container {
       display: block;
-      border: 2px solid #456;
+      background-color: var(--circle-color);
       border-radius: 100%;
       box-sizing: border-box;
-      width: 50px;
-      height: 50px;
+      width: 100%;
+      height: 100%;
       cursor: pointer;
       overflow: hidden;
     }
     line {
-      stroke: #456;
+      stroke: #181818;
       stroke-width: 2px;
     }
     </style>
     <div id="container" on-click="_spin">
       <svg height="50" width="50">
         <g>
-          <line x1="23" y1="0" x2="23" y2="23" stroke-linecap="round"/>
-          <line x1="23" y1="23" x2="0" y2="23" stroke-linecap="round"/>
+          <line x1="25" y1="0" x2="25" y2="25" stroke-linecap="round"/>
+          <line x1="25" y1="25" x2="0" y2="25" stroke-linecap="round"/>
         </g>
       </svg>
     </div>
@@ -33,10 +36,54 @@
       static get is() {
         return "kb-circle";
       }
+      static get properties() {
+        return {
+          currentPosition: Number,
+          positions: {
+            type: Array,
+            value: () => [ 90, 180, 270, 360 ]
+          },
+          currentColor: Number,
+          colors: {
+            type: Array,
+            value: () => [
+              '#4caf50',//green
+              '#ffeb3b',//yellow
+              '#3f51b5',//purple
+              '#ff9800',//orange
+              '#f44336'//red
+            ]
+          }
+        }
+      }
       _spin(e) {
         TweenLite.to(this.$.container, 0.2, {
-          rotation: "+=90", ease: Linear.easeNone
+          rotation: "+=90",
+          ease: Linear.easeNone
         });
+      }
+      changeSpinRandom() {
+        const randomIndex = Math.floor((Math.random() * 4) + 0);
+        TweenLite.to(this.$.container, 0.35, {
+          rotation: `+=${this.positions[randomIndex]}`,
+          ease: Linear.easeNone
+        });
+      }
+      changeColorRandom() {
+        const randomIndex = Math.floor((Math.random() * 5) + 0);
+        this.changeColor(randomIndex);
+      }
+      changeColor(index) {
+        this.updateStyles({'--circle-color': this.colors[index]});
+        this.currentColor = index;
+      }
+      starAsRandom() {
+        this.changeColorRandom();
+        this.changeSpinRandom();
+      }
+      ready() {
+        super.ready();
+        this.starAsRandom();
       }
     }
     customElements.define(KbCircle.is, KbCircle);
