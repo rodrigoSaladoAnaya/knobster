@@ -47,6 +47,7 @@
             type: Number,
             value: 0
           },
+          limit: Number,
           lock: {
             type: Boolean,
             value: false
@@ -104,10 +105,10 @@
         this.changeSpinRandom();
       }
       sendSpinValues() {
-        const dispatchEventFunc = (x, y, position) => { //Agregar el limites como propiedades
+        const dispatchEventFunc = (x, y, position) => {
           if((position == 'top' && y < 0)   ||
-            (position == 'right' && x > 5)  ||
-            (position == 'bottom' && y > 5) ||
+            (position == 'right' && x > this.limit)  ||
+            (position == 'bottom' && y > this.limit) ||
             (position == 'left' && x < 0)) {
             return;
           }
