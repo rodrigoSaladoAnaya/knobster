@@ -51,12 +51,12 @@
             type: Boolean,
             value: false
           },
-          currentPosition: Number,
-          positions: {
+          rotation: Number,
+          rotations: {
             type: Array,
             value: () => [ 90, 180, 270, 360 ]
           },
-          currentColor: Number,
+          color: Number,
           colors: {
             type: Array,
             value: () => [
@@ -71,16 +71,13 @@
       }
       _spin(e) {
         if(!this.lock) {
-          console.log(this.x, this.y);
-          console.log(this.currentColor, this.currentPosition);
-
           this.lock = true;
           TweenLite.to(this.$.container, 0.2, {
             rotation: "+=90",
             ease: Linear.easeNone,
             onComplete: () => {
-              this.currentPosition == 3 ? this.currentPosition = 0 : this.currentPosition++;
-              this.sendSpinvalues();
+              this.rotation == 3 ? this.rotation = 0 : this.rotation++;
+              this.sendSpinValues();
               this.lock = false;
             }
           });
@@ -89,10 +86,10 @@
       changeSpinRandom() {
         const randomIndex = Math.floor((Math.random() * 4) + 0);
         TweenLite.to(this.$.container, 0.35, {
-          rotation: `+=${this.positions[randomIndex]}`,
+          rotation: `+=${this.rotations[randomIndex]}`,
           ease: Linear.easeNone
         });
-        this.currentPosition = randomIndex;
+        this.rotation = randomIndex;
       }
       changeColorRandom() {
         const randomIndex = Math.floor((Math.random() * 5) + 0);
@@ -100,32 +97,46 @@
       }
       changeColor(index) {
         this.updateStyles({'--circle-color': this.colors[index]});
-        this.currentColor = index;
+        this.color = index;
       }
       starAsRandom() {
         this.changeColorRandom();
         this.changeSpinRandom();
       }
-      sendSpinvalues() { //TODO: Validar los limites
-        const topAddress = `circle-${this.x}-${this.y-1}-listener`;
-        const leftAddress = `circle-${this.x-1}-${this.y}-listener`;
-        const bottomAddress = `circle-${this.x}-${this.y+1}-listener`;
-        const rightAddress = `circle-${this.x+1}-${this.y}-listener`;
-        const detail = {detail: {
-          color: this.currentColor,
-          position: this.currentPosition
-        }};
-        document.dispatchEvent(new CustomEvent(topAddress, detail));
-        document.dispatchEvent(new CustomEvent(leftAddress, detail));
-        document.dispatchEvent(new CustomEvent(bottomAddress, detail));
-        document.dispatchEvent(new CustomEvent(rightAddress, detail));
+      sendSpinValues() {
+        const dispatchEventFunc = (x, y, position) => { //Agregar el limites como propiedades
+          if((position == 'top' && y < 0)   ||
+            (position == 'right' && x > 5)  ||
+            (position == 'bottom' && y > 5) ||
+            (position == 'left' && x < 0)) {
+            return;
+          }
+          document.dispatchEvent(new CustomEvent(`circle-${x}-${y}-listener`, {
+            detail: {
+              color: this.color,
+              rotation: this.rotation,
+              position: position
+          }}));
+        }
+        dispatchEventFunc(this.x, this.y-1, 'top');
+        dispatchEventFunc(this.x+1, this.y, 'right');
+        dispatchEventFunc(this.x, this.y+1, 'bottom');
+        dispatchEventFunc(this.x-1, this.y, 'left');
+      }
+      applyValidations(data, position, p1, p2, q1, q2) {
+        if(data.position == position
+          && (data.rotation == p1 || data.rotation == p2)
+          && (this.rotation == q1 || this.rotation == q2)) {
+            this.changeColor(data.color);
+            this._spin();
+        }
       }
       setListener() {
-        const address = `circle-${this.x}-${this.y}-listener`;
-        document.addEventListener(address, (e) => {
-          console.log(address, e.detail);
-          const data = e.detail;
-          this.changeColor(data.color);
+        document.addEventListener(`circle-${this.x}-${this.y}-listener`, (e) => {
+          this.applyValidations(e.detail, 'top', 0, 3, 1, 2);
+          this.applyValidations(e.detail, 'right', 0, 1, 2, 3);
+          this.applyValidations(e.detail, 'bottom', 1, 2, 3, 0);
+          this.applyValidations(e.detail, 'left', 2, 3, 0, 1);
         });
       }
       ready() {
