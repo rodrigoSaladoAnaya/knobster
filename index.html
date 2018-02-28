@@ -5,10 +5,11 @@
   <title>Knobster</title>
   <script src="js/TweenMax.min.js"></script>
   <script src="js/webcomponents-lite.js"></script>
-  <script src="js/webcomponents-loader.js"></script>
   <link rel="import"  href="polymer/polymer-element.html">
+  <link rel="import"  href="kb/kb-circle.html">
   <style>
     html, body {
+      display: block;
       padding: 0;
       margin: 0;
       width: 100vw;
@@ -21,7 +22,16 @@
 <body>
   <dom-module id="main-document-element">
     <template>
-      OK
+      <style>
+      :host {
+        display: flex;
+        justify-content: center;
+        align-items: center;        
+        width: 100%;
+        height: 100%;
+      }
+      </style>
+      <kb-circle></kb-circle>
     </template>
     <script>
     HTMLImports.whenReady(function() {
