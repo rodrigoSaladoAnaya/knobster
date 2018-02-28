@@ -8,7 +8,7 @@
   <link rel="import"  href="polymer/polymer-element.html">
   <link rel="import" href="polymer/lib/utils/render-status.html"/>
   <link rel="import"  href="polymer/lib/elements/dom-repeat.html">
-  <link rel="import"  href="kb/kb-circle.html">
+  <link rel="import"  href="kb-circle.html">
   <style>
     html, body {
       display: block;
@@ -37,10 +37,13 @@
       }
       </style>
       <div id="container">
-        <template is="dom-repeat" items="[[size]]" as="y">
+        <template is="dom-repeat" items="[[matrixSize]]" as="y">
           <div>
-            <template is="dom-repeat" items="[[size]]" as="x">
-              <kb-circle x="[[x]]" y="[[y]]" limit="[[size.length-1]]"></kb-circle>
+            <template is="dom-repeat" items="[[matrixSize]]" as="x">
+              <kb-circle
+                x="[[x]]" y="[[y]]"
+                matrixSize="[[matrixSize.length-1]]">
+              </kb-circle>
             </template>
           </div>
         </template>
@@ -52,19 +55,19 @@
         static get is() { return 'main-document-element'; }
         static get properties() {
           return {
-            size: {
+            matrixSize: {
               type: Array,
               value: () => [...Array(12).keys()]
             }
           }
         }
         monitorListener() {
-          document.addEventListener("monitor-listener", (e) => {
+          document.addEventListener("monitor-listener", ml => {
             const nodeCircles = this.shadowRoot.querySelectorAll("kb-circle");
             const circleList = Array.prototype.slice.call(nodeCircles);
-            const statusList = circleList.map(c => c.getLockStatus())
-            circleList.forEach(e => {
-              e.style.pointerEvents = statusList.some(s => s) ? "none" : "auto";
+            const statusList = circleList.map(c => c.lock);
+            circleList.forEach(el => {
+              el.style.pointerEvents = statusList.some(s => s) ? "none" : "auto";
             });
           });
         }

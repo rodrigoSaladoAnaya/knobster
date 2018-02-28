@@ -47,7 +47,7 @@
             type: Number,
             value: 0
           },
-          limit: Number,
+          matrixSize: Number,
           lock: {
             type: Boolean,
             value: false
@@ -69,9 +69,6 @@
             ]
           }
         }
-      }
-      getLockStatus() {
-        return this.lock;
       }
       _spin(e) {
         if(!this.lock) {
@@ -112,10 +109,10 @@
       }
       sendSpinValues() {
         const dispatchEventFunc = (x, y, position) => {
-          if((position == 'top' && y < 0)   ||
-            (position == 'right' && x > this.limit)  ||
-            (position == 'bottom' && y > this.limit) ||
-            (position == 'left' && x < 0)) {
+          if((position == 'top'    && y < 0)          ||
+             (position == 'right'  && x > this.matrixSize) ||
+             (position == 'bottom' && y > this.matrixSize) ||
+             (position == 'left'   && x < 0)) {
             return;
           }
           document.dispatchEvent(new CustomEvent(`circle-${x}-${y}-listener`, {
@@ -130,20 +127,20 @@
         dispatchEventFunc(this.x, this.y+1, 'bottom');
         dispatchEventFunc(this.x-1, this.y, 'left');
       }
-      applyValidations(data, position, p1, p2, q1, q2) {
-        if(data.position == position
-          && (data.rotation == p1 || data.rotation == p2)
-          && (this.rotation == q1 || this.rotation == q2)) {
-            this.changeColor(data.color);
-            this._spin();
-        }
-      }
       setListener() {
+        const applyValidations = (data, position, p1, p2, q1, q2) => {
+          if(data.position == position &&
+            (data.rotation == p1 || data.rotation == p2) &&
+            (this.rotation == q1 || this.rotation == q2)) {
+              this.changeColor(data.color);
+              this._spin();
+          }
+        }
         document.addEventListener(`circle-${this.x}-${this.y}-listener`, (e) => {
-          this.applyValidations(e.detail, 'top', 0, 3, 1, 2);
-          this.applyValidations(e.detail, 'right', 0, 1, 2, 3);
-          this.applyValidations(e.detail, 'bottom', 1, 2, 3, 0);
-          this.applyValidations(e.detail, 'left', 2, 3, 0, 1);
+          applyValidations(e.detail, 'top', 0, 3, 1, 2);
+          applyValidations(e.detail, 'right', 0, 1, 2, 3);
+          applyValidations(e.detail, 'bottom', 1, 2, 3, 0);
+          applyValidations(e.detail, 'left', 2, 3, 0, 1);
         });
       }
       ready() {
