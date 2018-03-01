@@ -100,7 +100,7 @@
         this.updateStyles({'--circle-color': this.colors[index]});
         this.color = index;
       }
-      starAsRandom() {
+      startAsRandom() {
         this.changeColorRandom();
         this.changeSpinRandom();
       }
@@ -144,7 +144,7 @@
       }
       ready() {
         super.ready();
-        this.starAsRandom();
+        this.startAsRandom();
         this.setListeners();
       }
     }
