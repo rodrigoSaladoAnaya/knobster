@@ -16,7 +16,6 @@
       margin: 0;
       width: 100vw;
       height: 100vh;
-      font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
       background-color: #f7f7f7;
     }
   </style>
@@ -38,7 +37,17 @@
       .rows {
         display: flex;
       }
+      #message {
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-size: 40px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        visibility: none;
+        position: absolute;
+        visibility: hidden;
+      }
       </style>
+      <div id="message">Awesome!</div>
       <div id="container">
         <template is="dom-repeat" items="[[matrixSize]]" as="y">
           <div class="rows">
@@ -67,9 +76,10 @@
           }
         }
         isWinner(circles) {
-          const won = circles.map(c => c.color).reduce((a, b) => a === b?a:false) !== false
+          const won = circles.map(c => c.color).reduce((a, b) => a === b ? a : false) !== false
           if(won) {
-            console.log("+1");
+            TweenMax.set(this.$.message, {visibility: 'visible'});
+            TweenMax.to(circles.map(c => c.$.container), 0.2, {opacity:0.15}, 0.2);
           }
         }
         monitorListener() {
