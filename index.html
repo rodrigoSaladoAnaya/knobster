@@ -63,6 +63,12 @@
             }
           }
         }
+        isWinner(circles) {
+          const won = circles.map(c => c.color).reduce((a, b) => a === b?a:false) !== false
+          if(won) {
+            console.log("+1");
+          }
+        }
         monitorListener() {
           document.addEventListener("monitor-listener", ml => {
             const circlesAsNode = this.shadowRoot.querySelectorAll("knobster-circle");
@@ -71,6 +77,7 @@
             circleAsList.forEach(el => {
               el.style.pointerEvents = statusList.some(s => s) ? "none" : "auto";
             });
+            this.isWinner(circleAsList);
           });
         }
         ready() {
