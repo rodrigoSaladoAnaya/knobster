@@ -5,10 +5,10 @@
   <title>Knobster</title>
   <script src="js/TweenMax.min.js"></script>
   <script src="js/webcomponents-lite.js"></script>
-  <link rel="import"  href="polymer/polymer-element.html">
+  <link rel="import" href="polymer/polymer-element.html">
   <link rel="import" href="polymer/lib/utils/render-status.html"/>
-  <link rel="import"  href="polymer/lib/elements/dom-repeat.html">
-  <link rel="import"  href="kb-circle.html">
+  <link rel="import" href="polymer/lib/elements/dom-repeat.html">
+  <link rel="import" href="knobster-circle.html">
   <style>
     html, body {
       display: block;
@@ -40,10 +40,10 @@
         <template is="dom-repeat" items="[[matrixSize]]" as="y">
           <div>
             <template is="dom-repeat" items="[[matrixSize]]" as="x">
-              <kb-circle
+              <knobster-circle
                 x="[[x]]" y="[[y]]"
                 matrixSize="[[matrixSize.length-1]]">
-              </kb-circle>
+              </knobster-circle>
             </template>
           </div>
         </template>
@@ -65,7 +65,7 @@
         }
         monitorListener() {
           document.addEventListener("monitor-listener", ml => {
-            const circlesAsNode = this.shadowRoot.querySelectorAll("kb-circle");
+            const circlesAsNode = this.shadowRoot.querySelectorAll("knobster-circle");
             const circleAsList = Array.prototype.slice.call(circlesAsNode);
             const statusList = circleAsList.map(c => c.lock);
             circleAsList.forEach(el => {

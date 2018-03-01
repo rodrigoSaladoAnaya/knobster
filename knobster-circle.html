@@ -1,4 +1,4 @@
-<dom-module id="kb-circle">
+<dom-module id="knobster-circle">
   <template>
     <style>
     :host {
@@ -33,9 +33,9 @@
     </div>
   </template>
   <script>
-    class KbCircle extends Polymer.Element {
+    class knobsterCircle extends Polymer.Element {
       static get is() {
-        return "kb-circle";
+        return "knobster-circle";
       }
       static get properties() {
         return {
@@ -55,7 +55,7 @@
           rotation: Number,
           rotations: {
             type: Array,
-            value: () => [ 90, 180, 270, 360 ]
+            value: () => [90, 180, 270, 360]
           },
           color: Number,
           colors: {
@@ -78,7 +78,7 @@
             ease: Linear.easeNone,
             onComplete: () => {
               this.rotation == 3 ? this.rotation = 0 : this.rotation++;
-              this.sendSpinValues();
+              this.propagateSpins();
               this.lock = false;
               document.dispatchEvent(new CustomEvent("monitor-listener", {
                 detail: { color: this.color }
@@ -88,7 +88,7 @@
         }
       }
       changeSpinRandom() {
-        const randomIndex = Math.floor((Math.random() * 4) + 0);
+        const randomIndex = Math.floor(Math.random() * 4);
         TweenLite.to(this.$.container, 0.35, {
           rotation: `+=${this.rotations[randomIndex]}`,
           ease: Linear.easeNone
@@ -96,7 +96,7 @@
         this.rotation = randomIndex;
       }
       changeColorRandom() {
-        const randomIndex = Math.floor((Math.random() * this.colors.length) + 0);
+        const randomIndex = Math.floor(Math.random() * this.colors.length);
         this.changeColor(randomIndex);
       }
       changeColor(index) {
@@ -107,7 +107,7 @@
         this.changeColorRandom();
         this.changeSpinRandom();
       }
-      sendSpinValues() {
+      propagateSpins() {
         const dispatchEventFunc = (x, y, position) => {
           if((position == 'top'    && y < 0)          ||
              (position == 'right'  && x > this.matrixSize) ||
@@ -128,7 +128,7 @@
           [this.x-1, this.y, 'left']
         ].forEach(i => dispatchEventFunc(...i));
       }
-      setListener() {
+      setListeners() {
         const applyValidations = (data, position, p1, p2, q1, q2) => {
           if(data.position == position &&
             (data.rotation == p1 || data.rotation == p2) &&
@@ -148,9 +148,9 @@
       ready() {
         super.ready();
         this.starAsRandom();
-        this.setListener();
+        this.setListeners();
       }
     }
-    customElements.define(KbCircle.is, KbCircle);
+    customElements.define(knobsterCircle.is, knobsterCircle);
   </script>
 </dom-module>
