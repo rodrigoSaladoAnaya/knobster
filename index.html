@@ -76,8 +76,9 @@
           }
         }
         isWinner(circles) {
-          const won = circles.map(c => c.color).reduce((a, b) => a === b ? a : false) !== false
-          if(won) {
+          const currentColors = circles.map(c => c.color)
+          const verify = currentColors.reduce((a, b) => a === b ? a : false)
+          if(verify !== false) {
             TweenMax.set(this.$.message, {visibility: 'visible'});
             TweenMax.to(circles.map(c => c.$.container), 0.2, {opacity:0.15}, 0.2);
           }
