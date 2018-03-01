@@ -33,12 +33,15 @@
         height: 100%;
       }
       #container {
-        min-width: 610px;
+        min-width: 600px;
+      }
+      .rows {
+        display: flex;
       }
       </style>
       <div id="container">
         <template is="dom-repeat" items="[[matrixSize]]" as="y">
-          <div>
+          <div class="rows">
             <template is="dom-repeat" items="[[matrixSize]]" as="x">
               <knobster-circle
                 x="[[x]]" y="[[y]]"
